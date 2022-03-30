@@ -8,4 +8,4 @@ def xo(s):
         return False
 
 print(xo("True expected"))
-print(xo("oue expected"))
+print(xo("ouexxx expected"))
