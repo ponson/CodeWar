@@ -204,6 +204,7 @@ def reg_test17():
     print(re.split('\d+', text1))
 
     ## 如果找不到匹配會回串全部字串
+    #commit again
     print(re.split('\s+', text1))
     return
 
