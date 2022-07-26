@@ -11,6 +11,6 @@ for l in range(N+1):
                 cnt+=1
         else:
             if (l < N - r):
-                cnt+=1
+                cnt += 1
 
 print(f"cnt={cnt}")
