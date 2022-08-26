@@ -1,0 +1,33 @@
+import re
+
+
+def valid_ISBN10(asin):
+    isbnRegex = re.compile(r'\d\d\d\d\d\d\d\d\d(\d|X)')
+    mo = isbnRegex.search(asin)
+    if mo == None or len(asin) != 10:
+        return False
+    else:
+        sum = 0
+        pos = 1
+        for num in asin:
+            if pos == 10 and num == 'X':
+                sum += 100
+            else:
+                sum += (int(num) * pos)
+                pos += 1
+
+        if sum % 11 == 0:
+            return True
+        else:
+            return False
+
+
+
+print(valid_ISBN10('1112223339')) #True
+print(valid_ISBN10('048665088X')) #True
+print(valid_ISBN10('1293000000')) #True
+print(valid_ISBN10('1234554321')) #True
+print(valid_ISBN10('1234512345')) #False
+print(valid_ISBN10('1293'))       #False
+print(valid_ISBN10('X123456788')) #False
+

@@ -19,6 +19,14 @@ def rule30(list_, n):
         list_ = result
     return result
 
-print(rule30([0], 1))
-print(rule30([1], 1))
-print(rule30([1], 2))
+
+def rule30_best(a, n):
+    for _ in range(n):
+        a = [int(0 < 4*x + 2*y + z < 5) for x, y, z in
+             zip([0, 0] + a, [0] + a + [0], a + [0, 0])]
+    return a
+
+print(rule30_best([1, 0], 2))
+# print(rule30([0], 1))
+# print(rule30([1], 1))
+# print(rule30([1], 2))
