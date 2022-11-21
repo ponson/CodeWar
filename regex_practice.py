@@ -10,11 +10,13 @@ def reg_test1():
     return
 
 def reg_test2():
-    list = ["guru99 get", "guru99 give", "guru Selenium"]
+    #list = ["guru99 get", "guru99 give", "guru Selenium"]
+    list = ["guru", "guru99 give", "guru Selenium"]
     for element in list:
-        z = re.match("(g\w+)\W(g\w+)", element)
+        # z = re.match("(g\w+)\W(g\w+)", element)
+        z = re.match("(g\w+\Wg\w+)", element)
         if z:
-            #print((z.groups()))
+            print((z.groups()))
             print(z)
 
     return
@@ -209,4 +211,4 @@ def reg_test17():
     return
 
 
-reg_test17()
+reg_test2()

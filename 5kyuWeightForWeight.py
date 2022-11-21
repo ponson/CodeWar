@@ -30,3 +30,12 @@ print(order_weight("103 123 4444 99 2000"))  # 2000 103 123 4444 99
 print(order_weight("2000 10003 1234000 44444444 9999 11 11 22 123"))
 print(order_weight("1 2 3 4 5 5 6"))
 print(order_weight(""))
+
+
+title = "HelloPonson"
+(lambda x: print(x))(title)
+
+numbers = [50, 2, 12, 30, 27, 4]
+result = filter(lambda x: x > 10, numbers)
+#print(list(result))
+print(result)

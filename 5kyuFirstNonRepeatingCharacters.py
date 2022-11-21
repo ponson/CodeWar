@@ -20,10 +20,26 @@ def first_non_repeating_letter(string):
     except ValueError:
         return ""
     return chars[idx]
-    
+
+def first_non_repeating_letter2(string):
+    string_lower = string.lower()
+    job1 = enumerate(string_lower)
+    print(type(job1))
+    print(list(job1))
+    for i, letter in job1: 
+        if string_lower.count(letter) == 1:
+            return string[i]
+            
+    return ""
 
 # print(first_non_repeating_letter("aabbccdeef"))
 # print(first_non_repeating_letter("aabbccee"))
 # print(first_non_repeating_letter(""))
-print(first_non_repeating_letter("sTreSS"))
-print(first_non_repeating_letter("Go hang a salami, I\'m a lasagna hog!"))
+# print(first_non_repeating_letter("sTreSS"))
+# print(first_non_repeating_letter("Go hang a salami, I\'m a lasagna hog!"))
+
+print(first_non_repeating_letter2("sTreSS"))
+# l1 = ["eat", "sleep", "repeat"]
+# obj1 = enumerate(l1)
+# print ("Return type:", type(obj1))
+# print (list(obj1))

@@ -13,8 +13,12 @@ def handle_one_direction(side, cur_x, cur_y, maps, depth):
         if j == depth-1 and maps[cur_x][j] == 0:
             for jj in range(cur_y+1, depth):
                 maps[cur_x][jj] = 1
-            cur_y = jj
-            cont = True
+            # Only move one step. Also mean the end.
+            if jj == cur_y+1:
+                cont = False
+            else:
+                cont = True
+                cur_y = jj
         # Can move more 
         elif j >= cur_y + 2:
             if maps[cur_x][j] == 1:
@@ -22,8 +26,12 @@ def handle_one_direction(side, cur_x, cur_y, maps, depth):
             for jj in range(cur_y+1, j):
                 maps[cur_x][jj] = 1
 
-            cur_y = jj
-            cont = True
+            # Only move one step. Also mean the end.
+            if cur_y+2 >= j:
+                cont = False
+            else:
+                cont = True
+                cur_y = jj
         # No more space. End
         else:
             cont = False
@@ -43,8 +51,12 @@ def handle_one_direction(side, cur_x, cur_y, maps, depth):
             for ii in range(cur_x+1, depth):
                 maps[ii][cur_y] = 1
                 
-            cur_x = ii 
-            cont = True
+            # Only move one step. Also mean the end.
+            if ii == cur_x+1:
+                cont = False
+            else:
+                cont = True
+                cur_x = ii 
         # Can move more 
         elif i >= cur_x + 2:
             if maps[i][cur_y] == 1:
@@ -52,8 +64,12 @@ def handle_one_direction(side, cur_x, cur_y, maps, depth):
             for ii in range(cur_x+1, i):
                 maps[ii][cur_y] = 1
 
-            cur_x = ii 
-            cont = True
+            # Only move one step. Also mean the end.
+            if cur_x+2 >= i:
+                cont = False
+            else:
+                cont = True
+                cur_x = ii 
         # No more space. End
         else:
             cont = False
@@ -73,8 +89,12 @@ def handle_one_direction(side, cur_x, cur_y, maps, depth):
             for jj in range(cur_y-1, -1, -1):
                 maps[cur_x][jj] = 1
                 
-            cur_y = jj
-            cont = True
+            # Only move one step. Also mean the end.
+            if jj == cur_y-1:
+                cont = False
+            else:
+                cont = True
+                cur_y = jj
         # Can move more 
         elif j <= cur_y - 2:
             if maps[cur_x][j] == 1:
@@ -82,8 +102,12 @@ def handle_one_direction(side, cur_x, cur_y, maps, depth):
             for jj in range(cur_y-1, j, -1):
                 maps[cur_x][jj] = 1
 
-            cur_y = jj
-            cont = True
+            # Only move one step. Also mean the end.
+            if cur_y-2 <= j:
+                cont = False
+            else:
+                cont = True
+                cur_y = jj
         # No more space. End
         else:
             cont = False
@@ -103,8 +127,12 @@ def handle_one_direction(side, cur_x, cur_y, maps, depth):
             for ii in range(cur_x-1, -1, -1):
                 maps[ii][cur_y] = 1
                 
-            cur_x = ii 
-            cont = True
+            # Only move one step. Also mean the end.
+            if ii == cur_x-1:
+                cont = False
+            else:
+                cont = True
+                cur_x = ii 
         # Can move more 
         elif i <= cur_x - 2:
             if maps[i][cur_y] == 1:
@@ -112,8 +140,12 @@ def handle_one_direction(side, cur_x, cur_y, maps, depth):
             for ii in range(cur_x-1, i, -1):
                 maps[ii][cur_y] = 1
 
-            cur_x = ii 
-            cont = True
+            # Only move one step. Also mean the end.
+            if cur_x-2 <= i:
+                cont = False
+            else:
+                cont = True
+                cur_x = ii 
         # No more space. End
         else:
             cont = False
