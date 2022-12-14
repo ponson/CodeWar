@@ -1,19 +1,19 @@
 def merge_overlap(input, output):
     in_len = len(input)
     if in_len > 1:
-        a = input[0]
-        b = input[1]
-        if a[1] >= b[0]:
-            if a[1] >= b[1]:
-                c = (a[0], a[1])
+        a, b = input[:2]
+        a_begin, a_end = a
+        b_begin, b_end = b
+        if a_end >= b_begin:
+            if a_end >= b_end:
+                c = (a_begin, a_end)
             else:
-                c = (a[0], b[1])
-            input.pop(0)
-            input.pop(0)
+                c = (a_begin, b_end)
+            del input[:2]
             input.insert(0, c)
         else:
             output.append(a) 
-            input.pop(0)
+            del input[0]
         merge_overlap(input, output)
 
     else:
