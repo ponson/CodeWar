@@ -1,3 +1,6 @@
+import copy
+
+
 FIELD_SIZE = (10, 10)
 battleField0 = [[1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
                [1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
@@ -11,7 +14,7 @@ battleField0 = [[1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
 
-battleField = [[1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+battleField1 = [[1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
                [1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
                [1, 0, 1, 0, 1, 1, 1, 0, 1, 0],
                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -22,9 +25,20 @@ battleField = [[1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
+battleField = [[0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+               [0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+               [0, 0, 1, 0, 1, 1, 1, 0, 1, 0],
+               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+               [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+               [0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+               [1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+               [1, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+               [1, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+               [1, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
 
 # 0: not checked, 1: checked, F: ship body has 'F'ound
-checkedField = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+cleanCheckedField = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -38,7 +52,7 @@ checkedField = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 
 ships_size = {4: 'battleship', 3: 'Cruiser', 2: 'Destroyer', 1: 'Submarine'}
 # ships_size = {'battleship': 4, 'Cruiser': 3, 'Destroyer': 2, 'Submarine': 1}
-ships_quantity = {'battleship': 1, 'Cruiser': 2,
+cleanShipsQuantity = {'battleship': 1, 'Cruiser': 2,
                   'Destroyer': 3, 'Submarine': 4}
 
 EDGE_HEAD = 'head'
@@ -140,15 +154,24 @@ def check_ship(b_field, c_field, direction, r, c):
 
 
 
-def record_ship(shape):
-    if ships_quantity[shape] == 0:
+def record_ship(quantities, shape):
+    if quantities[shape] == 0:
         return False
     else:
-        ships_quantity[shape] -= 1
+        quantities[shape] -= 1
         return True
 
 
+def quantity_check(quantities):
+    for q in quantities.values():
+        if q:
+            return False
+
+    return True
+
 def validate_battlefield(field):
+    checkedField = copy.deepcopy(cleanCheckedField)
+    ships_quantity = copy.deepcopy(cleanShipsQuantity)
     for row in range(10):
         for col in range(10):
             if checkedField[row][col] == 0:
@@ -159,15 +182,18 @@ def validate_battlefield(field):
                     if dir_result == 'Fail':
                         return False
                     elif dir_result == 'Submarine':
-                        if record_ship('Submarine') == False:
+                        if record_ship(ships_quantity, 'Submarine') == False:
                             return False
                     else:
                         ship_len, result = check_ship(field, checkedField, dir_result, row, col)
                         if result == False:
                             return False
-                        if record_ship(ships_size[ship_len]) == False:
+                        try:
+                            if record_ship(ships_quantity, ships_size[ship_len]) == False:
+                                return False
+                        except KeyError:
                             return False
 
-    return True
+    return quantity_check(ships_quantity)
 
 print(validate_battlefield(battleField))
