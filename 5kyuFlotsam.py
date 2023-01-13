@@ -86,159 +86,83 @@ pic5 = [
 ]
 
 
-
-def check_water(ship, c_idx, r_idx):
-    r_len = len(ship)
-    c_len = len(ship[0])
-    check_list = [(r_idx, c_idx+1), (r_idx, c_idx-1), (r_idx+1, c_idx), (r_idx-1, c_idx)]
+def check_water(image_pp, idx0_p, idx1_p):
     is_water = False
-    for px in check_list:
-        if 0 <= px[1] < r_len and 0 <= px[0] < c_len:
-            if ship[px[1]][px[0]] == '~':
-                is_water = True
-                break
-    
+    idx0_len, idx1_len = len(image_pp), len(image_pp[0]) 
+    for px in [(idx0_p-1, idx1_p), (idx0_p+1, idx1_p), (idx0_p, idx1_p-1), (idx0_p, idx1_p+1)]:
+        if 0 <= px[1] < idx1_len and 0 <= px[0] < idx0_len and image_pp[px[0]][px[1]] == '~':
+            is_water = True
+            break
+
     return is_water
 
 
+def show_image(image_p):
+    for axis0_list in image_p:
+        print("".join(axis1_item for axis1_item in axis0_list))
+
+
+def find_impact_x(image_p):
+    x_points = []
+    for idx0, axis0 in enumerate(image_p):
+        xs = [idx1 for idx1, c in enumerate(axis0) if c == 'x']
+        for x_idx1 in xs:
+            if check_water(image_p, idx0, x_idx1):
+                x_points.append((idx0, x_idx1))
+    return x_points
+
+
+def water_leak_impact(survive_p, image_p, len_0, len_1, x_p, direction):
+    idx0, idx1 = x_p[0], x_p[1]
+    if direction == "RIGHT":
+        r_start, r_end, r_step = idx1+1, len_1, 1
+    elif direction == "LEFT":
+        r_start, r_end, r_step = idx1-1, -1, -1
+    elif direction == "UP":
+        r_start, r_end, r_step = idx0-1, -1, -1
+    elif direction == "DOWN":
+        r_start, r_end, r_step = idx0+1, len_0, 1
+    else:
+        assert("Invalid Direction!")
+
+    if direction == "RIGHT" or direction == "LEFT":
+        for dir_idx1 in range(r_start, r_end, r_step):
+            if image_p[idx0][dir_idx1] == ' ' or image_p[idx0][dir_idx1] == 'x':
+                image_p[idx0][dir_idx1] = '~'
+            elif image_p[idx0][dir_idx1] in survive_p.keys():
+                survive_p.pop(image_p[idx0][dir_idx1])
+                image_p[idx0][dir_idx1] = '~'
+            else:
+                break
+    elif direction == "UP" or direction == "DOWN":
+        for dir_idx0 in range(r_start, r_end, r_step):
+            if image_p[dir_idx0][idx1] == ' ' or image_p[dir_idx0][idx1] == 'x':
+                image_p[dir_idx0][idx1] = '~'
+            elif image_p[dir_idx0][idx1] in survive_p.keys():
+                survive_p.pop(image_p[dir_idx0][idx1])
+                image_p[dir_idx0][idx1] = '~'
+            else:
+                break
+
+            #Left side
+            water_leak_impact(survive_p, image_p, len_0, len_1, (dir_idx0, idx1), "LEFT")
+            #Right side
+            water_leak_impact(survive_p, image_p, len_0, len_1, (dir_idx0, idx1), "RIGHT")
+    
+directions = ['RIGHT', 'LEFT', "UP", "DOWN"]
+
 def flotsam(image):
     survive = {'F':'Frank', 'S': 'Sam', 'T': 'Tom'}
-    for r in image:
-        for c in r:
-            print(c, end="")
-        print()
 
-    x_points = []
-    col_idx = 0
-    for row in image:
-        idx, offset = 0, 0
-        row_x_count = row.count('x')
-        for _ in range(row_x_count):
-            try:
-                idx = row[offset:].index('x')
-                if check_water(image, col_idx, idx + offset):
-                    x_points.append((col_idx, idx + offset))
-                    print(f"x is in ({col_idx}, {idx + offset}) ")
-                idx += 1
-                offset += idx
-            except ValueError:
-                pass
-
-        col_idx += 1
-
+    show_image(image)
+    x_points = find_impact_x(image)
     print(x_points)
     
+    idx0_len, idx1_len = len(image), len(image[0]) 
     for x in x_points:
-        rIdx, cIdx = x[0], x[1]
-        #Right side
-        for right_idx in range(cIdx+1, len(image[0])):
-            if image[rIdx][right_idx] == ' ' or image[rIdx][right_idx] == 'x':
-                image[rIdx][right_idx] = '~'
-            elif image[rIdx][right_idx] in survive.keys():
-                survive.pop(image[rIdx][right_idx])
-                image[rIdx][right_idx] = '~'
-            else:
-                break
-        #Left side
-        for left_idx in range(cIdx-1, -1, -1):
-            if image[rIdx][left_idx] == ' ' or image[rIdx][left_idx] == 'x':
-                image[rIdx][left_idx] = '~'
-            elif image[rIdx][left_idx] in survive.keys():
-                survive.pop(image[rIdx][left_idx])
-                image[rIdx][left_idx] = '~'
-            else:
-                break
-        # Up side
-        for up_idx in range(rIdx-1, -1, -1):
-            if image[up_idx][cIdx] == ' ' or image[up_idx][cIdx] == 'x':
-                image[up_idx][cIdx] = '~'
-                #Right side
-                for right_idx in range(cIdx+1, len(image[0])):
-                    if image[up_idx][right_idx] == ' ' or image[up_idx][right_idx] == 'x':
-                        image[up_idx][right_idx] = '~'
-                    elif image[up_idx][right_idx] in survive.keys():
-                        survive.pop(image[up_idx][right_idx])
-                        image[up_idx][right_idx] = '~'
-                    else:
-                        break
-                #Left side
-                for left_idx in range(cIdx-1, -1, -1):
-                    if image[up_idx][left_idx] == ' ' or image[up_idx][left_idx] == 'x':
-                        image[up_idx][left_idx] = '~'
-                    elif image[up_idx][left_idx] in survive.keys():
-                        survive.pop(image[up_idx][left_idx])
-                        image[up_idx][left_idx] = '~'
-                    else:
-                        break
-            elif image[up_idx][cIdx] in survive.keys():
-                survive.pop(image[up_idx][cIdx])
-                image[up_idx][cIdx] = '~'
-                #Right side
-                for right_idx in range(cIdx+1, len(image[0])):
-                    if image[up_idx][right_idx] == ' ' or image[up_idx][right_idx] == 'x':
-                        image[up_idx][right_idx] = '~'
-                    elif image[up_idx][right_idx] in survive.keys():
-                        survive.pop(image[up_idx][right_idx])
-                        image[up_idx][right_idx] = '~'
-                    else:
-                        break
-                #Left side
-                for left_idx in range(cIdx-1, -1, -1):
-                    if image[up_idx][left_idx] == ' ' or image[up_idx][left_idx] == 'x':
-                        image[up_idx][left_idx] = '~'
-                    elif image[up_idx][left_idx] in survive.keys():
-                        survive.pop(image[up_idx][left_idx])
-                        image[up_idx][left_idx] = '~'
-                    else:
-                        break
-            else:
-                break
+        for check_side in directions:
+            water_leak_impact(survive, image, idx0_len, idx1_len, x, check_side)
 
-        # Down side
-        for up_idx in range(rIdx+1, len(image)):
-            if image[up_idx][cIdx] == ' ' or image[up_idx][cIdx] == 'x':
-                image[up_idx][cIdx] = '~'
-                #Right side
-                for right_idx in range(cIdx+1, len(image[0])):
-                    if image[up_idx][right_idx] == ' ' or image[up_idx][right_idx] == 'x':
-                        image[up_idx][right_idx] = '~'
-                    elif image[up_idx][right_idx] in survive.keys():
-                        survive.pop(image[up_idx][right_idx])
-                        image[up_idx][right_idx] = '~'
-                    else:
-                        break
-                #Left side
-                for left_idx in range(cIdx-1, -1, -1):
-                    if image[up_idx][left_idx] == ' ' or image[up_idx][left_idx] == 'x':
-                        image[up_idx][left_idx] = '~'
-                    elif image[up_idx][left_idx] in survive.keys():
-                        survive.pop(image[up_idx][left_idx])
-                        image[up_idx][left_idx] = '~'
-                    else:
-                        break
-            elif image[up_idx][cIdx] in survive.keys():
-                survive.pop(image[up_idx][cIdx])
-                image[up_idx][cIdx] = '~'
-                #Right side
-                for right_idx in range(cIdx+1, len(image[0])):
-                    if image[up_idx][right_idx] == ' ' or image[up_idx][right_idx] == 'x':
-                        image[up_idx][right_idx] = '~'
-                    elif image[up_idx][right_idx] in survive.keys():
-                        survive.pop(image[up_idx][right_idx])
-                        image[up_idx][right_idx] = '~'
-                    else:
-                        break
-                #Left side
-                for left_idx in range(cIdx-1, -1, -1):
-                    if image[up_idx][left_idx] == ' ' or image[up_idx][left_idx] == 'x':
-                        image[up_idx][left_idx] = '~'
-                    elif image[up_idx][left_idx] in survive.keys():
-                        survive.pop(image[up_idx][left_idx])
-                        image[up_idx][left_idx] = '~'
-                    else:
-                        break
-            else:
-                break
     print(f"Survior is {survive.values()}")
     return " ".join(survive.values())
 
