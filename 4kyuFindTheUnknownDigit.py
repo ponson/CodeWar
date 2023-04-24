@@ -1,3 +1,15 @@
+def replaceQmarkAndCheckValid(num, n):
+    num = num.replace('?', n)
+
+    if (int(num) == 0 and num != '0') or (num[0] == '0' and len(num) > 1) or ():
+        return num, "Invalid"
+
+    if len(num) > 1 and (num[0] == '0' or (num[0] == '-' and num[1] == '0')):
+        return num, "Invalid"
+        
+    return num, "Valid"
+
+
 def solve_runes(runes):
     #TODO 1 切出tokens。 operators, operands, answer
     operands = ['*', '+', '-']
@@ -24,16 +36,15 @@ def solve_runes(runes):
 
     print(num_pool)
     for n in num_pool:
-        new_op1 = op1.replace('?', n)
-        new_op2 = op2.replace('?', n)
-        new_answer = answer.replace('?', n)
-        if (int(new_op1) == 0 and new_op1 != '0') or (int(new_op2) == 0 and new_op2 != '0') or (int(new_answer) == 0 and new_answer != '0'):
+        new_op1, result = replaceQmarkAndCheckValid(op1, n)
+        if result == "Invalid":
             continue
-        if n == '0':
-            if (new_op1[0] == n and len(new_op1) > 1) or (new_op2[0] == n and len(new_op2) > 1) or (new_answer[0] == n and len(new_answer) > 1):
-                continue
-            if (len(new_op1) > 1 and new_op1[1] == n and new_op1[0] == '-') or (len(new_op2) > 1 and new_op2[1] == n and new_op2[0] == '-') or (len(new_answer) > 1 and new_answer[1] == n and new_answer[0] == '-'): 
-                continue
+        new_op2, result = replaceQmarkAndCheckValid(op2, n)
+        if result == "Invalid":
+            continue
+        new_answer, result = replaceQmarkAndCheckValid(answer, n)
+        if result == "Invalid":
+            continue
             
         if optor == '+':
             if int(new_op1) + int(new_op2) == int(new_answer):
