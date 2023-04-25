@@ -45,25 +45,11 @@ def solve_runes(runes):
         new_answer, result = replaceQmarkAndCheckValid(answer, n)
         if result == "Invalid":
             continue
-            
-        if optor == '+':
-            if int(new_op1) + int(new_op2) == int(new_answer):
-                return int(n)
-            else:
-                continue
-        elif optor == '-':
-            # print(f"int op1 = {int(new_op1)}")
-            # print(f"int op2 = {int(new_op2)}")
-            # print(f"int answer = {int(new_answer)}")
-            if int(new_op1) - int(new_op2) == int(new_answer):
-                return int(n)
-            else:
-                continue
-        elif optor == '*':
-            if int(new_op1) * int(new_op2) == int(new_answer):
-                return int(n)
-            else:
-                continue
+
+        if int(new_answer) == eval(new_op1+optor+new_op2):
+            return int(n)
+        else:
+            continue
 
     return -1
     
