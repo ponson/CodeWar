@@ -11,7 +11,6 @@ def getMatchedOne(code, curP, c):
                     return curP
                 else:
                     stack -= 1
-
             curP += 1
     elif c == ']':
         curP -= 1
@@ -23,17 +22,16 @@ def getMatchedOne(code, curP, c):
                     return curP
                 else:
                     stack -= 1
-            
             curP -= 1
 
     return curP
 
 
 def nextP(code, curP, value):
-    if value == '0' and code[curP] == '[':
+    if value == 0 and code[curP] == '[':
         #TODO find next ']' position
         curP = getMatchedOne(code, curP, '[')
-    elif value == '1' and code[curP] == ']':
+    elif value == 1 and code[curP] == ']':
         #TODO Goto the past '['position
         curP = getMatchedOne(code, curP, ']')
     else:
@@ -43,7 +41,7 @@ def nextP(code, curP, value):
 
 
 def interpreter(code, tape):
-    taplist = list(tape)
+    taplist = list(map(int, tape))
     p, tIdx = 0, 0
 
     while p < len(code):
@@ -52,16 +50,50 @@ def interpreter(code, tape):
         elif code[p] == '<':
             tIdx -= 1
         elif code[p] == '*':
-            if int(taplist[tIdx]):
-                taplist[tIdx] = '0'
-            else:
-                taplist[tIdx] = '1'
+            taplist[tIdx] ^= 1
         if tIdx >= 0 and tIdx < len(taplist):
             p = nextP(code, p, taplist[tIdx])
         else:
             break
 
-    return ''.join(taplist)
+    return ''.join(map(str, taplist))
+
+
+def interpreter2(code, tape):
+    tape = list(map(int, tape))
+    ptr = step = loop = 0
+
+    while 0 <= ptr < len(tape) and step < len(code):
+        command = code[step]
+
+        if loop:
+            if command == "[":
+                loop += 1
+            elif command == "]":
+                loop -= 1
+
+        elif command == ">":
+            ptr += 1
+        elif command == "<":
+            ptr -= 1
+        elif command == "*":
+            tape[ptr] ^= 1
+        elif command == "[" and tape[ptr] == 0:
+            loop += 1
+        elif command == "]" and tape[ptr] == 1:
+            loop -= 1
+
+        step += 1 if not loop else loop // abs(loop)
+
+    return "".join(map(str, tape))
+
+def test():
+    step = 1
+    loop = 2
+
+    step += 10 if not loop else 5
+
+    print(step)
 
  # Flips the leftmost cell of the tape
 # print(interpreter("*", "00101100"))#, "10101100")
@@ -75,8 +107,9 @@ def interpreter(code, tape):
 # print(interpreter(">>>>>*<*<<*", "00101100"))#, "00000000")
 
 
-print(interpreter("*>*>>>*>*>>>>>*>[>*]", "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"))
-print(interpreter("[[]*>*>*>]", "000"))  # , "000")
-print(interpreter("*>[[]*>]<*", "100"))  # , "100")
-print(interpreter("[*>[>*>]>]", "11001"))  # , "01100")
-print(interpreter("[>[*>*>*>]>]", "10110"))  # , "10101")
+# print(interpreter("*>*>>>*>*>>>>>*>[>*]", "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"))
+# print(interpreter("[[]*>*>*>]", "000"))  # , "000")
+# print(interpreter("*>[[]*>]<*", "100"))  # , "100")
+print(interpreter2("[*>[>*>]>]", "11001"))  # , "01100")
+# print(interpreter("[>[*>*>*>]>]", "10110"))  # , "10101")
+# test()
