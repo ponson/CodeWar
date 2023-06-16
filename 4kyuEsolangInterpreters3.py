@@ -1,8 +1,6 @@
 def interpreter(code, iterations, width, height):
-    m = [[0] * width]
-    mm = [[0] * width for i in range(height)]
+    mm = [[0] * width for _ in range(height)]
     codeIdx, rowIdx, colIdx, loop, skip = 0, 0, 0, 0, 0
-    deltaStep = 1
     validChars = 'news*[]'
     # print(f"code={code}")
     # print(f"iter={iterations}")
@@ -12,8 +10,6 @@ def interpreter(code, iterations, width, height):
         # check = code[codeIdx] in list(validChars) 
         # print(f"check={check}, codeIdx={codeIdx}")
         if code[codeIdx] in list(validChars):
-            if loop == 0 and deltaStep > 0:
-                skip = 0
             if code[codeIdx] == 'n' and skip == 0:  #UP
                 rowIdx -= 1
                 rowIdx %= height
@@ -34,27 +30,30 @@ def interpreter(code, iterations, width, height):
                 mm[rowIdx][colIdx] ^= 1
                 iterations -= 1
             elif code[codeIdx] == '[':
-                if deltaStep == -1 and loop == -1:
-                    deltaStep = 1
+                if skip > 0 and loop >= 0:
+                    skip += 1
+                if loop == -1:
                     loop += 1
-                if deltaStep == 1:
+                    skip = 0
+                    iterations -= 1
+                elif skip == 0:
                     if mm[rowIdx][colIdx] == 0:
                         skip = 1
-                    else:
-                        skip = 0
                     iterations -= 1
                 loop += 1
             elif code[codeIdx] == ']':
-                if deltaStep > 0:
-                    if mm[rowIdx][colIdx] == 1:
-                        skip = 1
-                        deltaStep = -1
-                        loop -= 1
+                if loop >= 0:
+                    if skip > 0:
+                        skip -= 1
                     else:
-                        skip = 0
+                        if mm[rowIdx][colIdx] == 1:
+                            skip = 1
+                            loop -= 1
+                        else:
+                            skip = 0
                 loop -= 1
 
-        codeIdx += deltaStep
+        codeIdx += 1 if loop >= 0 else loop // abs(loop)
 
     result = '\\r\\n'.join(''.join(str(n) for n in row) for row in mm)
 
@@ -71,7 +70,9 @@ def test(width, height):
 
 
 # test(6,9)
-interpreter("*[es*]", 37, 5, 6)
+interpreter("*[s[e]*]", 23, 5, 5)
+# '11000\r\n10000\r\n10000\r\n10000\r\n10000'
+# interpreter("*[es*]", 37, 5, 6)
 # interpreter("*[s[e]*]", 9, 5, 5)
 # '10000\r\n10000\r\n10000\r\n00000\r\n00000'
 # interpreter("*[es*]", 5, 5, 6)
