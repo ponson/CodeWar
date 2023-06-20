@@ -1,59 +1,24 @@
 def interpreter(code, iterations, width, height):
     mm = [[0] * width for _ in range(height)]
-    codeIdx, rowIdx, colIdx, loop, skip = 0, 0, 0, 0, 0
+    codeIdx = rowIdx = colIdx = loop = 0
+    #loop 可取代skip, 當loop != 0時，就相當於skip = 1
     validChars = 'news*[]'
-    # print(f"code={code}")
-    # print(f"iter={iterations}")
-    # print(f"w={width}")
-    # print(f"h={height}")
+    code = ''.join(c for c in code if c in validChars)
     while iterations and codeIdx < len(code):
-        # check = code[codeIdx] in list(validChars) 
-        # print(f"check={check}, codeIdx={codeIdx}")
-        if code[codeIdx] in list(validChars):
-            if code[codeIdx] == 'n' and skip == 0:  #UP
-                rowIdx -= 1
-                rowIdx %= height
-                iterations -= 1
-            elif code[codeIdx] == 'e' and skip == 0:  #RIGHT
-                colIdx += 1
-                colIdx %= width
-                iterations -= 1
-            elif code[codeIdx] == 'w' and skip == 0:  #LEFT
-                colIdx -= 1
-                colIdx %= width
-                iterations -= 1
-            elif code[codeIdx] == 's' and skip == 0:  #DOWN
-                rowIdx += 1
-                rowIdx %= height
-                iterations -= 1
-            elif code[codeIdx] == '*' and skip == 0:  #Reverse
-                mm[rowIdx][colIdx] ^= 1
-                iterations -= 1
-            elif code[codeIdx] == '[':
-                if skip > 0 and loop >= 0:
-                    skip += 1
-                if loop == -1:
-                    loop += 1
-                    skip = 0
-                    iterations -= 1
-                elif skip == 0:
-                    if mm[rowIdx][colIdx] == 0:
-                        skip = 1
-                    iterations -= 1
-                loop += 1
-            elif code[codeIdx] == ']':
-                if loop >= 0:
-                    if skip > 0:
-                        skip -= 1
-                    else:
-                        if mm[rowIdx][colIdx] == 1:
-                            skip = 1
-                            loop -= 1
-                        else:
-                            skip = 0
-                loop -= 1
+        if loop:
+            if code[codeIdx] == '[': loop += 1
+            elif code[codeIdx] == ']': loop -=1
+            
+        elif code[codeIdx] == 'n':  rowIdx = (rowIdx - 1) % height  #UP
+        elif code[codeIdx] == 'e':  colIdx = (colIdx + 1) % width   #RIGHT
+        elif code[codeIdx] == 'w':  colIdx = (colIdx - 1) % width   #LEFT
+        elif code[codeIdx] == 's':  rowIdx = (rowIdx + 1) % height  #DOWN
+        elif code[codeIdx] == '*':  mm[rowIdx][colIdx] ^= 1         #Reverse
+        elif code[codeIdx] == '[' and mm[rowIdx][colIdx] == 0: loop += 1
+        elif code[codeIdx] == ']' and mm[rowIdx][colIdx] != 0: loop -= 1
 
         codeIdx += 1 if loop >= 0 else loop // abs(loop)
+        iterations -= 1 if not loop else 0
 
     result = '\\r\\n'.join(''.join(str(n) for n in row) for row in mm)
 
