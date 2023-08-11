@@ -36,13 +36,12 @@ class Dinglemouse(object):
                 waitCntInDirection = sum([len(q) for q in self.queues[self.curFloor+1:]])
                 for w in self.queues[self.curFloor]:
                     if len(self.inBox) < self.capacity:
-                        if w > self.curFloor or waitCntInDirection == 0:
+                        if w > self.curFloor or (waitCntInDirection == 0 and len([x for x in self.inBox if x > self.curFloor]) == 0):
                             tempQ.remove(w)
                             self.waitingCnt -= 1
                             self.inBox.append(w)
-                    else:
-                        if self.trackRecord[-1] != self.curFloor:
-                            self.trackRecord.append(self.curFloor)
+                    elif w > self.curFloor and self.trackRecord[-1] != self.curFloor:
+                        self.trackRecord.append(self.curFloor)
                         break
                 if loaded < len(self.inBox) and self.trackRecord[-1] != self.curFloor:
                     self.trackRecord.append(self.curFloor)
@@ -50,13 +49,12 @@ class Dinglemouse(object):
                 waitCntInDirection = sum([len(q) for q in self.queues[0:self.curFloor]])
                 for w in self.queues[self.curFloor]:
                     if len(self.inBox) < self.capacity:
-                        if w < self.curFloor or waitCntInDirection == 0:
+                        if w < self.curFloor or (waitCntInDirection == 0 and len([x for x in self.inBox if x < self.curFloor]) == 0):
                             tempQ.remove(w)
                             self.waitingCnt -= 1
                             self.inBox.append(w)
-                    else:
-                        if self.trackRecord[-1] != self.curFloor:
-                            self.trackRecord.append(self.curFloor)
+                    elif w < self.curFloor and self.trackRecord[-1] != self.curFloor:
+                        self.trackRecord.append(self.curFloor)
                         break
                 if loaded < len(self.inBox) and self.trackRecord[-1] != self.curFloor:
                     self.trackRecord.append(self.curFloor)
@@ -115,6 +113,24 @@ class Dinglemouse(object):
 # queues = ((3,), (2,), (0,), (2,), (), (), (5,))
 # lift = Dinglemouse(queues, 5)
 # print(lift.theLift()) #[0, 1, 2, 3, 6, 5, 3, 2, 0]
-queues = ((), (0, 0, 0, 6), (), (), (), (6, 6, 0, 0, 0, 6), ())
-lift = Dinglemouse(queues, 5)
-print(lift.theLift()) #[0, 1, 5, 6, 5, 1, 0, 1, 0]
+# queues = ((), (0, 0, 0, 6), (), (), (), (6, 6, 0, 0, 0, 6), ())
+# lift = Dinglemouse(queues, 5)
+# print(lift.theLift()) #[0, 1, 5, 6, 5, 1, 0, 1, 0]
+# queues = ((), (2,), (3, 3, 3), (1,), (), (), ())
+# lift = Dinglemouse(queues, 1)
+# print(lift.theLift()) #[0, 1, 2, 3, 1, 2, 3, 2, 3, 0]
+# queues = ((2,), (0, 0, 2), (1, 1, 1, 0))
+# lift = Dinglemouse(queues, 1)
+# print(lift.theLift()) #[0, 1, 2, 1, 0, 1, 2, 1, 0, 2, 1, 2, 0]
+# print("[0, 1, 2, 1, 0, 1, 2, 1, 0, 2, 1, 2, 0]-->Answer")
+# queues = ((6, 3, 5, 3), (3, 2, 3), (1, 6, 5, 1), (1,), (6, 6, 2, 0), (2, 2, 4, 1), (0, 5, 4, 5, 2))
+# lift = Dinglemouse(queues, 5)
+# print(lift.theLift()) #[0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 5, 6, 5, 4, 3, 1, 0]
+# print("[0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 5, 6, 5, 4, 3, 1, 0]-->Answer")
+# queues = ((2, 2, 1), (2,), (1,))
+# lift = Dinglemouse(queues, 2)
+# print(lift.theLift()) #[0, 1, 2, 1, 0, 1, 2, 0]
+# print("[0, 1, 2, 1, 0, 1, 2, 0]-->Answer")
+queues = ((), (0,), (3,), (), ())
+lift = Dinglemouse(queues, 2)
+print(lift.theLift()) #
