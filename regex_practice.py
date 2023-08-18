@@ -210,5 +210,18 @@ def reg_test17():
     print(re.split('\s+', text1))
     return
 
+def reg_test18():
+    m = re.match("([abc])+", "abefg")
+    print(m.groups())
+    m = re.match("(?:[abc])+", "abefg")
+    print(m.groups())
 
-reg_test2()
+
+def reg_test19():
+    p = re.compile(r'(?P<word>\b\w+\b)')
+    m = p.search('(((( Lots of punctuation )))')
+    print(m.group('word'))
+    print(m.group(1))
+    print(m.groups())
+
+reg_test19()
