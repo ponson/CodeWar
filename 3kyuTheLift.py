@@ -1,3 +1,37 @@
+import unittest
+
+class TestDinglemouse(unittest.TestCase):
+    def test_case1(self):
+        queues = ( (),   (),    (5,5,5), (),   (),    (),    () )
+        lift = Dinglemouse(queues, 5)
+        self.assertEqual(lift.theLift(), [0, 2, 5, 0])
+        
+    def test_case2(self):
+        queues = ( (),   (),    (5,5,5), (),   (),    (),    () )
+        lift = Dinglemouse(queues, 5)
+        self.assertEqual(lift.theLift(), [0, 2, 5, 0])
+
+    def test_case3(self):
+        queues = ( (),   (3,),  (4,),    (),   (5,),  (),    () )
+        lift = Dinglemouse(queues, 5)
+        self.assertEqual(lift.theLift(), [0, 1, 2, 3, 4, 5, 0])
+
+    def test_case4(self):
+        queues = ((), (0, 0, 0, 6), (), (), (), (6, 6, 0, 0, 0, 6), ())
+        lift = Dinglemouse(queues, 5)
+        self.assertEqual(lift.theLift(), [0, 1, 5, 6, 5, 1, 0, 1, 0])
+
+    def test_case5(self):
+        queues = ((), (0, 0, 0, 6), (), (), (), (6, 6, 0, 0, 0, 6), ())
+        lift = Dinglemouse(queues, 5)
+        self.assertEqual(lift.theLift(), [0, 1, 5, 6, 5, 1, 0, 1, 0])
+
+    def test_case6(self):
+        queues = ((), (2,), (3, 3, 3), (1,), (), (), ())
+        lift = Dinglemouse(queues, 1)
+        self.assertEqual(lift.theLift(), [0, 1, 2, 3, 1, 2, 3, 2, 3, 0])
+
+
 class Dinglemouse(object):
 
     def __init__(self, queues, capacity):
@@ -54,42 +88,5 @@ class Dinglemouse(object):
         return self.trackRecord
 
 
-# queues = ( (),   (),    (5,5,5), (),   (),    (),    () )
-# lift = Dinglemouse(queues, 5)
-# print(lift.theLift()) #[0, 2, 5, 0]
-# queues = ( (),   (),    (1,1),   (),   (),    (),    () )
-# lift = Dinglemouse(queues, 5)
-# print(lift.theLift()) #[0, 2, 1, 0]
-# queues = ( (),   (3,),  (4,),    (),   (5,),  (),    () )
-# lift = Dinglemouse(queues, 5)
-# print(lift.theLift()) #[0, 1, 2, 3, 4, 5, 0]
-# queues = ( (),   (0,),  (),      (),   (2,),  (3,),  () )
-# lift = Dinglemouse(queues, 5)
-# print(lift.theLift()) #[0, 5, 4, 3, 2, 1, 0]
-# queues = ((3,), (2,), (0,), (2,), (), (), (5,))
-# lift = Dinglemouse(queues, 5)
-# print(lift.theLift()) #[0, 1, 2, 3, 6, 5, 3, 2, 0]
-# queues = ((), (0, 0, 0, 6), (), (), (), (6, 6, 0, 0, 0, 6), ())
-# lift = Dinglemouse(queues, 5)
-# print(lift.theLift()) #[0, 1, 5, 6, 5, 1, 0, 1, 0]
-# queues = ((), (2,), (3, 3, 3), (1,), (), (), ())
-# lift = Dinglemouse(queues, 1)
-# print(lift.theLift()) #[0, 1, 2, 3, 1, 2, 3, 2, 3, 0]
-# queues = ((2,), (0, 0, 2), (1, 1, 1, 0))
-# lift = Dinglemouse(queues, 1)
-# print(lift.theLift()) #[0, 1, 2, 1, 0, 1, 2, 1, 0, 2, 1, 2, 0]
-# print("[0, 1, 2, 1, 0, 1, 2, 1, 0, 2, 1, 2, 0]-->Answer")
-# queues = ((6, 3, 5, 3), (3, 2, 3), (1, 6, 5, 1), (1,), (6, 6, 2, 0), (2, 2, 4, 1), (0, 5, 4, 5, 2))
-# lift = Dinglemouse(queues, 5)
-# print(lift.theLift()) #[0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 5, 6, 5, 4, 3, 1, 0]
-# print("[0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 5, 6, 5, 4, 3, 1, 0]-->Answer")
-# queues = ((2, 2, 1), (2,), (1,))
-# lift = Dinglemouse(queues, 2)
-# print(lift.theLift()) #[0, 1, 2, 1, 0, 1, 2, 0]
-# print("[0, 1, 2, 1, 0, 1, 2, 0]-->Answer")
-# queues = ((), (0,), (3,), (), ())
-# lift = Dinglemouse(queues, 2)
-# print(lift.theLift()) #[0, 2, 3, 1, 0]
-queues = ((), (0, 0, 0, 6), (), (), (), (6, 6, 0, 0, 0, 6), ())
-lift = Dinglemouse(queues, 5)
-print(lift.theLift()) #[0, 1, 5, 6, 5, 1, 0, 1, 0]
+if __name__ == '__main__':
+    unittest.main()
