@@ -74,15 +74,99 @@ def check_rules(c1, c2):
     #     c = [x for x in 'RGB' if x not in (c1, c2)]
     #     return c[0]
 
+# def triangle_iter(row):
+#     loop = len(row) - 1
+#     iters = loop
+#     row = iter(row)
+#     for i in range(loop):
+#         new_str = ''
+#         for j in range(iters):
+#             if j == 0:
+#                 a = next(row)
+#             else:
+#                 a = b
+#             b = next(row)
+#             new_str += mapTable[a+b]
+#         iters -= 1
+#         row = iter(new_str)
+#     return next(row)
+
+# def reduce_repeat_more_than_three(row):
+#     result = []
+#     count = 1
+#     for i in range(len(row)):
+#         if i == 0 or row[i] != row[i-1]:
+#             count = 1
+#             result.append(row[i])
+#         else:
+#             count += 1
+        
+#         if count == 2:
+#             result.append(row[i])
+#         elif count == 3:
+#             result.pop()
+#             count = 1
+
+#     return ''.join(result)
+
+        
+
+
+# def triangle(row):
+#     while len(row) > 1:
+#         row = reduce_repeat_more_than_three(row)
+#         if len(row) > 1:
+#             row = [mapTable[row[i]+row[i+1]] for i in range(len(row)-1)]
+#     return row[0]
+
+
+def convert_3_chars(a, b, c):
+    if a==b==c:
+        return b
+    if a==b:
+        return c
+    if b==c:
+        return a
+    if a==c:
+        return mapTable[a+b]
+
+    return b
+
+# def triangle(row):
+#     while len(row) > 2:
+#         row = ''.join([convert_3_chars(row[i], row[i+1], row[i+2]) for i in range(len(row)-2)])
+
+#     if len(row) == 2:
+#         return mapTable[row]
+#     else:
+#         return row
+        
+
 def triangle(row):
+
+    while len(row) > 3:
+        row = row[0] + triangle(row[1:-1]) + row[-1]
+    else:
+        if len(row) == 3:
+            return convert_3_chars(row[0], row[1], row[2])
+        if len(row) == 2:
+            return mapTable[row]
+        return row
+
+
+def triangle_old(row):
     loop = len(row) - 1
     for _ in range(loop):
         row = [mapTable[row[i]+row[i+1]] for i in range(len(row)-1)]
     return row[0]
 
 if __name__ == '__main__':
+    # tests = ['test_case1', 'test_case2', 'test_case3', 'test_case4', 'test_case5'] 
     tests = ['test_case7'] 
     # suite = (unittest.TestLoader().loadTestsFromTest)
     suite = unittest.TestSuite(map(TestColouredTriangles, tests))
     # unittest.main(verbosity=2)
     unittest.TextTestRunner(verbosity=2).run(suite)
+
+# row = 'BRRRGGGGBBB'
+# print(reduce_repeat_more_than_three(row))
