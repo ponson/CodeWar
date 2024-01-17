@@ -1,4 +1,5 @@
 import unittest
+import collections
 
 
 class TestInstantRunOffVoting(unittest.TestCase):
@@ -48,24 +49,22 @@ def runoff(voters):
     numOfCandidate = len(voters[0])
     numOfVotes = len(voters)
     votesDone = False
-    checkVotes = list(range(numOfVotes))
     removed_candidates = []
     removedCnt = 0
 
-    for i in checkVotes:
-        highest_candiate_index[voters[i][0]][i] = 0 
+    for i, vote in enumerate(voters):
+        highest_candiate_index[vote[0]][i] = 0
 
     while votesDone == False:
 
         # TODO Get each candidate's votes
-        for k in candidateGotVotes.keys():
-            candidateGotVotes[k] = len(highest_candiate_index[k])
-        # TODO check if someone has won
+        candidateGotVotes = {k:len(highest_candiate_index[k]) for k in candidateGotVotes.keys()}
 
-        if max(candidateGotVotes.values()) > numOfVotes / 2:
-            for (key, value) in candidateGotVotes.items():
-                if value == max(candidateGotVotes.values()):
-                    return key  # Got the winner
+        # TODO check if someone has won
+        winner, max_score = max([x for x in candidateGotVotes.items()], key=lambda x: x[1])
+        if max_score > len(voters) / 2:
+            return winner # Got the winner
+        
         # TODO compare the smallest votes of candidates
         else:
             for (key, value) in candidateGotVotes.items():
@@ -95,9 +94,19 @@ def runoff(voters):
     return None
 
 
+def runoff_ref(voters):
+    while voters[0]:
+        poll = collections.Counter(ballot[0] for ballot in voters)
+        print(f"poll={poll.items()}")
+        winner, maxscore = max(poll.items(), key=lambda x: x[1])
+        minscore = min(poll.values())
+        if maxscore * 2 > len(voters):
+            return winner
+        voters = [[c for c in voter if poll[c] > minscore] for voter in voters]
+
 if __name__ == '__main__':
-    tests = ['test_case1', 'test_case2', 'test_case3', 'test_case4']
-    # tests = ['test_case4']
+    # tests = ['test_case1', 'test_case2', 'test_case3', 'test_case4']
+    tests = ['test_case4']
     # suite = (unittest.TestLoader().loadTestsFromTest)
     suite = unittest.TestSuite(map(TestInstantRunOffVoting, tests))
     # unittest.main(verbosity=2)
