@@ -41,7 +41,7 @@ def permu_counts(word):
     return int(pcount)
 
 
-# @timer
+@timer
 def listPosition(word):
     sorted_l = sorted(word)
     idx, total = 0, 0

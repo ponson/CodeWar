@@ -12,7 +12,6 @@ import sys
 from sympy import Symbol, series
 
 
-
 def list_test():
     print(len([0]))
     print(len([]))
@@ -390,7 +389,7 @@ def re_practice():
     # phoneNumber = re.compile(r'\d\d\d-\d\d\d-\d\d\d\d')
     phoneNumber = re.compile(r'\d{3}-\d{3}-\d{4}')
     mo = phoneNumber.search('My number is 415-555-4242.')
-    print('Phone number found: '+ mo.group())
+    print('Phone number found: ' + mo.group())
 
 
 def re_practice1():
@@ -401,11 +400,13 @@ def re_practice1():
     mo = phoneNumber.search('Tina Fey and Batman')
     print(mo.group())
 
+
 def re_practice2():
     batRegex = re.compile(r'Bat(man|mobile|copter|bat)')
     mo = batRegex.search("Batmobile lost a wheel")
     print(mo.group())
     print(mo.group(1))
+
 
 def re_practice3():
     batRegex = re.compile(r'Bat(wo)?man')
@@ -413,7 +414,8 @@ def re_practice3():
     print(mo.group())
     mo = batRegex.search("The adventure of Batwoman")
     print(mo.group())
-    
+
+
 def re_practice4():
     greedyHaRegex = re.compile(r'(Ha){3,5}')
     mo1 = greedyHaRegex.search('HaHaHaHaHa')
@@ -423,27 +425,33 @@ def re_practice4():
     mo1 = greedyHaRegex.search('HaHaHaHaHa')
     print(mo1.group())
 
+
 def re_practice5():
     phoneNumRegex = re.compile(r'\d\d\d-\d\d\d-\d\d\d\d')
     print(phoneNumRegex.findall('Cell: 415-555-9999, Work: 212-555-0000'))
 
+
 def re_practice6():
     phoneNumRegex = re.compile(r'(\d\d\d)-(\d\d\d)-(\d\d\d\d)')
     print(phoneNumRegex.findall('Cell: 415-555-9999, Work: 212-555-0000'))
+
 
 def re_practice7():
     beginWithHello = re.compile(r'^Hello')
     # print(beginWithHello.search('Hello World'))
     print(beginWithHello.search('She said: Hello World'))
 
+
 def re_practice8():
     endWithNumber = re.compile(r'\d$')
     print(endWithNumber.search('Your number is 42'))
     print(endWithNumber.search('Your number is 42'))
 
+
 def re_practice9():
     atRegex = re.compile(r'.at')
     print(atRegex.findall('The cat in the hat sat on flatmat'))
+
 
 def re_practice10():
     nameRegex = re.compile(r'First Name:(.*) Last Name:\s*(\S*)')
@@ -451,9 +459,12 @@ def re_practice10():
     print(mo.group(1))
     print(mo.group(2))
 
+
 def re_practice11():
     agentNameRegex = re.compile(r'Agent (\w)\w*')
-    print(agentNameRegex.sub(r'\1****', 'Agent Alice told Agent Carol that Agent Eve knew Agent Bob was a double agent.'))
+    print(agentNameRegex.sub(r'\1****',
+          'Agent Alice told Agent Carol that Agent Eve knew Agent Bob was a double agent.'))
+
 
 def re_split():
     code = '''\
@@ -476,6 +487,7 @@ mod_func:
     resultList = codeRegex.split(code)
     print(resultList)
 
+
 def re_split2():
     code = 'abcdefgabcdefgabcdefg'
     codeRegex = re.compile(r'd')
@@ -484,11 +496,14 @@ def re_split2():
 
 
 fruits = ['apple', 'banana', 'cherry']
+
+
 def listpop(lst):
 
     lst.pop()
 
     return lst
+
 
 def listslice(lst):
 
@@ -499,4 +514,20 @@ def listslice(lst):
 
     return lst
 
-print(listslice(fruits))
+
+def anyargs(*args, **kwargs):
+    print(args)
+    print(kwargs)
+
+
+def keyargonly(maxsize, *, block):
+    print("receive message")
+
+import math
+
+def sqrtTest(num):
+    return math.isqrt(num)
+
+print(sqrtTest(5))
+print(sqrtTest(25))
+ttesbabc defg
