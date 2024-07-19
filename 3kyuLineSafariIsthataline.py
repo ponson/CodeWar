@@ -261,63 +261,79 @@ def path_check(start, end, grid, rlen, clen, hlcnt, vlcnt, pluslcnt):
             curpluscnt += 1
             # Check UP or DOWN
             if direction == 'UPDOWN':
+                upcheck, downcheck = False, False
                 # Check UP side
                 nextRow = curRow - 1
                 if nextRow >= 0 and [nextRow, curCol] not in pathpoints:
                     if grid[nextRow][curCol] == '|' or (grid[nextRow][curCol] == '+' and ((nextRow - 1 >= 0 and grid[nextRow-1][curCol] != '|') or nextRow-1 < 0)):
-                        curRow = nextRow
-                        if grid[nextRow][curCol] == '|':
-                            direction = 'UP'
-                        else:
-                            direction = 'LEFTRIGHT'
-                        continue
+                        upcheck = True
                     elif grid[nextRow][curCol] == 'X':
                         curRow = nextRow
                         findNext = False
+                        continue
 
                 # Check DOWN side
                 nextRow = curRow + 1
                 if nextRow < rlen and [nextRow, curCol] not in pathpoints:
                     if grid[nextRow][curCol] == '|' or (grid[nextRow][curCol] == '+' and ((nextRow + 1 < rlen and grid[nextRow+1][curCol] != '|') or nextRow+1 >= rlen)):
-                        curRow = nextRow
-                        if grid[nextRow][curCol] == '|':
-                            direction = 'DOWN'
-                        else:
-                            direction = 'LEFTRIGHT'
-                        continue
+                        downcheck = True
                     elif grid[nextRow][curCol] == 'X':
                         curRow = nextRow
                         findNext = False
+                        continue
+
+                if upcheck == True and downcheck == True: #Ambigous!
+                    findNext = False
+                elif upcheck == True:
+                    curRow = curRow - 1
+                    if grid[curRow][curCol] == '|':
+                        direction = 'UP'
+                    else:
+                        direction = 'LEFTRIGHT'
+                elif downcheck == True:
+                    curRow = curRow + 1
+                    if grid[curRow][curCol] == '|':
+                        direction = 'DOWN'
+                    else:
+                        direction = 'LEFTRIGHT'
 
             # Check LEFT or RIGHT
             else:
+                leftcheck, rightcheck = False, False
                 # Check LEFT side
                 nextCol = curCol - 1
                 if nextCol >= 0 and [curRow, nextCol] not in pathpoints:
                     if grid[curRow][nextCol] == '-' or (grid[curRow][nextCol] == '+' and ((nextCol - 1 >= 0 and grid[curRow][nextCol-1] != '-') or nextCol-1 < 0)):
-                        curCol = nextCol
-                        if grid[curRow][nextCol] == '-':
-                            direction = 'LEFT'
-                        else:
-                            direction = 'UPDOWN'
-                        continue
+                        leftcheck = True
                     elif grid[curRow][nextCol] == 'X':
                         curCol = nextCol
                         findNext = False
+                        continue
 
                 # Check RIGHT side
                 nextCol = curCol + 1
                 if nextCol < clen and [curRow, nextCol] not in pathpoints:
                     if grid[curRow][nextCol] == '-' or (grid[curRow][nextCol] == '+' and ((nextCol + 1 < rlen and grid[curRow][nextCol-1] != '-') or nextCol+1 >= rlen)):
-                        curCol = nextCol
-                        if grid[curRow][nextCol] == '-':
-                            direction = 'RIGHT'
-                        else:
-                            direction = 'UPDOWN'
-                        continue
+                        rightcheck = True
                     elif grid[curRow][nextCol] == 'X':
                         curCol = nextCol
                         findNext = False
+                        continue
+
+                if leftcheck == True and rightcheck == True: #Ambigous!
+                    findNext = False
+                elif leftcheck == True:
+                    curCol = curCol - 1
+                    if grid[curRow][curCol] == '-':
+                        direction = 'LEFT'
+                    else:
+                        direction = 'UPDOWN'
+                elif rightcheck == True:
+                    curCol = curCol + 1
+                    if grid[curRow][curCol] == '-':
+                        direction = 'RIGHT'
+                    else:
+                        direction = 'UPDOWN'
 
     if grid[curRow][curCol] == 'X' and [curRow, curCol] != start and hlcnt == curhcnt and vlcnt == curvcnt and pluslcnt == curpluscnt:
         if isX and (curhcnt+curvcnt+curpluscnt > 0):
@@ -370,6 +386,6 @@ if __name__ == '__main__':
     testparts = ['testgood1', 'testgood2',
                  'testgood3', 'testgood4', 'testgood5']
     testOne = ['testbad8']
-    suite = unittest.TestSuite(map(LineValidTest, testOne))
-    # suite = unittest.TestSuite(map(LineValidTest, tests))
+    # suite = unittest.TestSuite(map(LineValidTest, testOne))
+    suite = unittest.TestSuite(map(LineValidTest, tests))
     unittest.TextTestRunner(verbosity=2).run(suite)
