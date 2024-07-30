@@ -61,6 +61,23 @@ class LineValidTest(unittest.TestCase):
                 "      X       "]
         self.assertEqual(line(show(grid)), True)
 
+    def testgood8(self):
+        grid = ["   X     X  ",
+                "   ++++  +-+",
+                "    +++--+ |",
+                "         +-+"]
+        self.assertEqual(line(show(grid)), True)
+
+
+    def testgood9(self):
+        grid = [" +-----+  ",
+                " |+---+|  ",
+                " ||+-+||  ",
+                " |||X+||  ",
+                " X|+--+|  ",
+                "  +----+  "]
+        self.assertEqual(line(show(grid)), True)
+
     def testbad1(self):
         grid = ["X-----|----X"]
         self.assertEqual(line(show(grid)), False)
@@ -127,227 +144,163 @@ def path_check(start, end, grid, rlen, clen, hlcnt, vlcnt, pluslcnt):
     findNext = True
     direction = None
     curhcnt, curvcnt, curpluscnt = 0, 0, 0
-    isX = False
+    dtmoves = {'UP': -1, 'DOWN': 1, 'LEFT': -1, 'RIGHT': 1}
+    
     while findNext:
-        if grid[curRow][curCol] == 'X':
-            if [curRow, curCol] in pathpoints:
-                findNext = False
-            else:
-                pathpoints.append([curRow, curCol])
-            # Check four direction items
-            nears = []
-            if curRow+1 < rlen and grid[curRow+1][curCol] != ' ':
-                nears.append(grid[curRow+1][curCol])
-            if curRow-1 >= 0 and grid[curRow-1][curCol] != ' ':
-                nears.append(grid[curRow-1][curCol])
-            if curCol-1 >= 0 and grid[curRow][curCol-1] != ' ':
-                nears.append(grid[curRow][curCol-1])
-            if curCol+1 < clen and grid[curRow][curCol+1] != ' ':
-                nears.append(grid[curRow][curCol+1])
-            if 'X' in nears:
-                isX = True
-            else:
-                isX = False
-            # Check DOWN
-            if curRow+1 < rlen and grid[curRow+1][curCol] != ' ' and (grid[curRow+1][curCol] != 'X' or isX == True):
-                if grid[curRow+1][curCol] == '|':
-                    curRow += 1
-                    direction = 'DOWN'
-                    continue
-                elif grid[curRow+1][curCol] == '+':
-                    curRow += 1
-                    direction = 'LEFTRIGHT'
-                    continue
-                elif grid[curRow+1][curCol] == 'X':
-                    curRow += 1
-                    findNext = False
+        if [curRow, curCol] in pathpoints:
+            break
+        else:
+            pathpoints.append([curRow, curCol])
 
-            # Check UP
-            elif curRow-1 >= 0 and grid[curRow-1][curCol] != ' ' and (grid[curRow-1][curCol] != 'X' or isX == True):
-                if grid[curRow-1][curCol] == '|':
-                    curRow -= 1
-                    direction = 'UP'
-                    continue
-                elif grid[curRow-1][curCol] == '+':
-                    curRow -= 1
-                    direction = 'LEFTRIGHT'
-                    continue
-                elif grid[curRow-1][curCol] == 'X':
-                    curRow -= 1
-                    findNext = False
-            # Check LEFT
-            elif curCol-1 >= 0 and grid[curRow][curCol-1] != ' ' and (grid[curRow][curCol-1] != 'X' or isX == True):
-                if grid[curRow][curCol-1] == '-':
-                    curCol -= 1
-                    direction = 'LEFT'
-                    continue
-                elif grid[curRow][curCol-1] == '+':
-                    curCol -= 1
-                    direction = 'UPDOWN'
-                    continue
-                elif grid[curRow][curCol-1] == 'X':
-                    curCol -= 1
-                    findNext = False
-            # Check RIGHT
-            elif curCol+1 < clen and grid[curRow][curCol+1] != ' ' and (grid[curRow][curCol+1] != 'X' or isX == True):
-                if grid[curRow][curCol+1] == '-':
-                    curCol += 1
-                    direction = 'RIGHT'
-                    continue
-                elif grid[curRow][curCol+1] == '+':
-                    curCol += 1
-                    direction = 'UPDOWN'
-                    continue
-                elif grid[curRow][curCol+1] == 'X':
-                    curCol += 1
-                    findNext = False
-            else:
+        if grid[curRow][curCol] == 'X':
+            # Check four direction items
+            nears = {}
+            if curRow+1 < rlen and grid[curRow+1][curCol] != ' ':
+                nears['DOWN']= grid[curRow+1][curCol]
+            if curRow-1 >= 0 and grid[curRow-1][curCol] != ' ':
+                nears['UP']= grid[curRow-1][curCol]
+            if curCol-1 >= 0 and grid[curRow][curCol-1] != ' ':
+                nears['LEFT']= grid[curRow][curCol-1]
+            if curCol+1 < clen and grid[curRow][curCol+1] != ' ':
+                nears['RIGHT']= grid[curRow][curCol+1]
+            if 'X' in nears.values():
+                if hlcnt == curhcnt and vlcnt == curvcnt and pluslcnt == curpluscnt:
+                    return True, stepcnt
+                else:
+                    return False, 0
+            for k, v in nears.items():
+                #Check UP or DOWN
+                if k == 'UP' or k == 'DOWN':
+                    curRow += dtmoves[k]
+                    if v == '|':
+                        direction = k
+                    elif v == '+':
+                        direction = 'LEFTRIGHT'
+                    else:
+                        curRow -= dtmoves[k]
+                else:
+                    curCol += dtmoves[k]
+                    if v == '-':
+                        direction = k
+                    elif v == '+':
+                        direction = 'UPDOWN'
+                    else:
+                        curCol -= dtmoves[k]
+            
+            if len(nears) == 0:
                 findNext = False
 
         elif grid[curRow][curCol] == '-':
             stepcnt += 1
-            if [curRow, curCol] in pathpoints:
-                findNext = False
-            else:
-                pathpoints.append([curRow, curCol])
             curhcnt += 1
-            # Check LEFT or RIGHT
-            if direction == 'LEFT':
-                nextCol = curCol - 1
-            else:
-                nextCol = curCol + 1
+            nextCol = curCol + dtmoves[direction]
             if nextCol >= 0 and nextCol < clen:
+                curCol = nextCol
                 if grid[curRow][nextCol] == '-':
-                    curCol = nextCol
                     continue
                 elif grid[curRow][nextCol] == '+':
-                    curCol = nextCol
                     direction = "UPDOWN"
                     continue
                 elif grid[curRow][nextCol] == 'X':
-                    curCol = nextCol
                     findNext = False
 
         elif grid[curRow][curCol] == '|':
             stepcnt += 1
-            if [curRow, curCol] in pathpoints:
-                findNext = False
-            else:
-                pathpoints.append([curRow, curCol])
             curvcnt += 1
-            # Check UP or DOWN
-            if direction == 'UP':
-                nextRow = curRow - 1
-            else:
-                nextRow = curRow + 1
+            nextRow = curRow + dtmoves[direction]
             if nextRow >= 0 and nextRow < rlen:
+                curRow = nextRow
                 if grid[nextRow][curCol] == '|':
-                    curRow = nextRow
                     continue
                 elif grid[nextRow][curCol] == '+':
-                    curRow = nextRow
                     direction = 'LEFTRIGHT'
                     continue
                 elif grid[nextRow][curCol] == 'X':
-                    curRow = nextRow
                     findNext = False
 
         elif grid[curRow][curCol] == '+':
             stepcnt += 1
-            if [curRow, curCol] in pathpoints:
-                findNext = False
-            else:
-                pathpoints.append([curRow, curCol])
             curpluscnt += 1
+            checkvalid = 0
             # Check UP or DOWN
             if direction == 'UPDOWN':
-                upcheck, downcheck = False, False
                 # Check UP side
                 nextRow = curRow - 1
                 if nextRow >= 0 and [nextRow, curCol] not in pathpoints:
                     if grid[nextRow][curCol] == '|' or (grid[nextRow][curCol] == '+' and ((nextRow - 1 >= 0 and grid[nextRow-1][curCol] != '|') or nextRow-1 < 0)):
-                        upcheck = True
+                        checkvalid += 1
+                        shiftmove = -1
                     elif grid[nextRow][curCol] == 'X':
                         curRow = nextRow
                         findNext = False
-                        continue
 
                 # Check DOWN side
                 nextRow = curRow + 1
                 if nextRow < rlen and [nextRow, curCol] not in pathpoints:
                     if grid[nextRow][curCol] == '|' or (grid[nextRow][curCol] == '+' and ((nextRow + 1 < rlen and grid[nextRow+1][curCol] != '|') or nextRow+1 >= rlen)):
-                        downcheck = True
+                        checkvalid += 1
+                        shiftmove = 1
                     elif grid[nextRow][curCol] == 'X':
                         curRow = nextRow
                         findNext = False
-                        continue
 
-                if upcheck == True and downcheck == True: #Ambigous!
+                if checkvalid >= 2: #Ambigous!
                     findNext = False
-                elif upcheck == True:
-                    curRow = curRow - 1
-                    if grid[curRow][curCol] == '|':
-                        direction = 'UP'
-                    else:
-                        direction = 'LEFTRIGHT'
-                elif downcheck == True:
-                    curRow = curRow + 1
-                    if grid[curRow][curCol] == '|':
-                        direction = 'DOWN'
-                    else:
-                        direction = 'LEFTRIGHT'
+                elif checkvalid == 1:
+                    curRow += shiftmove
+                    if shiftmove == -1 or shiftmove == 1:
+                        if grid[curRow][curCol] == '|':
+                            if shiftmove == -1:
+                                direction = 'UP'
+                            else:
+                                direction = 'DOWN'
+                        else:
+                            direction = 'LEFTRIGHT'
 
             # Check LEFT or RIGHT
             else:
-                leftcheck, rightcheck = False, False
+                shiftmove = 0
                 # Check LEFT side
                 nextCol = curCol - 1
                 if nextCol >= 0 and [curRow, nextCol] not in pathpoints:
                     if grid[curRow][nextCol] == '-' or (grid[curRow][nextCol] == '+' and ((nextCol - 1 >= 0 and grid[curRow][nextCol-1] != '-') or nextCol-1 < 0)):
-                        leftcheck = True
+                        shiftmove = -1
+                        checkvalid += 1
                     elif grid[curRow][nextCol] == 'X':
                         curCol = nextCol
                         findNext = False
-                        continue
 
                 # Check RIGHT side
                 nextCol = curCol + 1
                 if nextCol < clen and [curRow, nextCol] not in pathpoints:
                     if grid[curRow][nextCol] == '-' or (grid[curRow][nextCol] == '+' and ((nextCol + 1 < rlen and grid[curRow][nextCol-1] != '-') or nextCol+1 >= rlen)):
-                        rightcheck = True
+                        shiftmove = 1
+                        checkvalid += 1
                     elif grid[curRow][nextCol] == 'X':
                         curCol = nextCol
                         findNext = False
-                        continue
 
-                if leftcheck == True and rightcheck == True: #Ambigous!
+                if checkvalid >= 2: #Ambigous!
                     findNext = False
-                elif leftcheck == True:
-                    curCol = curCol - 1
-                    if grid[curRow][curCol] == '-':
-                        direction = 'LEFT'
-                    else:
-                        direction = 'UPDOWN'
-                elif rightcheck == True:
-                    curCol = curCol + 1
-                    if grid[curRow][curCol] == '-':
-                        direction = 'RIGHT'
-                    else:
-                        direction = 'UPDOWN'
+                elif checkvalid == 1:
+                    curCol += shiftmove
+                    if shiftmove == -1 or shiftmove == 1:
+                        if grid[curRow][curCol] == '-':
+                            if shiftmove == -1:
+                                direction = 'LEFT'
+                            else:
+                                direction = 'RIGHT'
+                        else:
+                            direction = 'UPDOWN'
 
     if grid[curRow][curCol] == 'X' and [curRow, curCol] != start and hlcnt == curhcnt and vlcnt == curvcnt and pluslcnt == curpluscnt:
-        if isX and (curhcnt+curvcnt+curpluscnt > 0):
-            return False, stepcnt
-        else:
-            return True, stepcnt
+        return True, stepcnt
     else:
         return False, stepcnt
 
 
 def line(grid):
-    rows = len(grid)
-    cols = len(grid[0])
-    print(f"cols={cols}, rows={rows}")
+    rows, cols = len(grid), len(grid[0])
     Xpos = []
     hlcount, vlcount, pluslcount = 0, 0, 0
     for r in range(rows):
@@ -379,13 +332,12 @@ def line(grid):
     else:
         return False
 
-
 if __name__ == '__main__':
     tests = ['testgood1', 'testgood2', 'testgood3', 'testgood4', 'testgood5', 'testgood6', 'testgood7',
              'testbad1', 'testbad2', 'testbad3', 'testbad4', 'testbad5', 'testbad6', 'testbad7', 'testbad8']
     testparts = ['testgood1', 'testgood2',
                  'testgood3', 'testgood4', 'testgood5']
-    testOne = ['testbad8']
-    # suite = unittest.TestSuite(map(LineValidTest, testOne))
-    suite = unittest.TestSuite(map(LineValidTest, tests))
+    testOne = ['testgood9']
+    suite = unittest.TestSuite(map(LineValidTest, testOne))
+    # suite = unittest.TestSuite(map(LineValidTest, tests))
     unittest.TextTestRunner(verbosity=2).run(suite)
