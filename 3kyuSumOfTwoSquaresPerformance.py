@@ -101,6 +101,6 @@ if __name__ == '__main__':
     tests = ['testcase1', 'testcase2', 'testcase3', 'testcase4',
              'testcase5', 'testcase6', 'testcase7', 'testcase8', 'testcase9', 'testcase10',
              'testcase11', 'testcase12',  'testcase13']
-    testOne = ['testcase9']
+    testOne = ['testcase8']
     suite = unittest.TestSuite(map(Test_SumOfTwoSquare, testOne))
     unittest.TextTestRunner(verbosity=2).run(suite)
