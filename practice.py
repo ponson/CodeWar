@@ -9,6 +9,8 @@ import gzip
 import bz2
 import re
 import sys
+import functools
+import time
 from sympy import Symbol, series
 
 
@@ -528,6 +530,38 @@ import math
 def sqrtTest(num):
     return math.isqrt(num)
 
-print(sqrtTest(5))
-print(sqrtTest(25))
-ttesbabc defg
+# print(sqrtTest(5))
+# print(sqrtTest(25))
+# ttesbabc defg
+
+
+def timer(func):
+    """Print the runtime of the decorated function"""
+
+    @functools.wraps(func)
+    def wrapper_timer(*args, **kwargs):
+        start_time = time.perf_counter()
+        value = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        run_time = end_time - start_time
+        print(f"Finished {func.__name__!r} in {run_time:.4f} secs")
+        return value
+
+    return wrapper_timer
+
+@timer
+def listpermutation():
+    i = 0
+    for _ in itertools.permutations('ABCDEFGH'):
+    # for _ in itertools.permutations('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+        i+=1
+    print(i)
+
+
+# listpermutation()
+
+def mathexp():
+
+    print((6**21) % 4)
+
+mathexp()

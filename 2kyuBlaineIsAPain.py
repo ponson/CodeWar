@@ -88,17 +88,6 @@ class BlaineIsaPainTest(unittest.TestCase):
 
 def track_parser(alltracks):
     initCheckDirect = {'-':((0, 1)), '|':((1, 0)), '/': (-1, 1), '\\': ((1, 1)), 'S':((0, 1))}
-    validNextChars = {'-':('-','\\', '/', '+', 'S'), 
-                      '|':('|','\\', '/', '+', 'S'),
-                      '\\':('\\', '|', '-', 'X', 'S'),
-                      '/':('/', '|', '-', 'X', 'S'),
-                      '+':('/', '\\', '|', '-', 'X', '+', 'S'),
-                      'X':('/', '\\', '|', '-', 'X', '+', 'S'),
-                      'S':('/', '\\', '|', '-', 'X', '+') }
-    keepSameDirection = {'-': {'-', '+', 'S'},
-                         '|': {'|', '+', 'S'},
-                         '/': {'/', 'X', 'S'},
-                         '\\': {'\\', 'X', 'S'}}
     nextValidChars = {(0, 1): {'/':(-1, 1), '\\':(1, 1), '-':(0, 1), 'S':(0, 1), '+':(0, 1)},
                      (0,-1): {'/':(1,-1), '\\':(-1, -1), '-':(0, -1), 'S':(0, -1), '+':(0, -1)},
                      (1, 0): {'/':(1,-1), '\\':(1, 1), '|':(1, 0), 'S':(1, 0), '+':(1, 0)},
@@ -107,7 +96,6 @@ def track_parser(alltracks):
                      (-1, -1): {'-':(0,-1), '|':(-1, 0), '\\': (-1, -1), 'S': (-1, -1), 'X': (-1, -1), '+': (0, -1)},
                      (-1, 1): {'-':(0, 1), '|':(-1, 0), '/': (-1, 1), 'S': (-1, 1), 'X': (-1, 1), '+': (0, 1)},
                      (1, -1): {'-':(0, -1), '|':(1, 0), '/': (1, -1), 'S': (1, -1), 'X': (1, -1), '+': (0, -1)}}
-    directions = [(-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0)]
     checkSteps = {(-1, 1): [[(-1, 0), '|S+'], [(-1, 1), '/XS+'], [(0, 1), '-S+']], 
                   (0, 1): [ [(-1, 1), ''], [(0, 1), '-S+/\\'], [(1, 1), '']], 
                   (1, 1): [[(0, 1), '-S+'], [(1, 1), '\\XS'], [(1, 0), '|S+']],
@@ -126,19 +114,15 @@ def track_parser(alltracks):
             tmaps[(0, idx)] = [0]
             break
 
-    print(f"The original pos is: ({tracks[0]})")
-
     parseConti = True
     curDirect = initCheckDirect[tracks[0][1]]
     curPos = tracks[-1][0]
     curChar = tracks[-1][1]
     while parseConti:
         #next position choice
-        dirIdx = directions.index(curDirect)
         for l in checkSteps[curDirect]:
             delta = l[0]
             validchars = l[1]
-            # delta = directions[(dirIdx+df)%8]
             candiPos = (curPos[0]+delta[0] , curPos[1]+delta[1])
             #check boundary
             rows = len(trackRows)
@@ -159,7 +143,6 @@ def track_parser(alltracks):
                     curDirect = nextValidChars[delta][curChar]
                     break
 
-    # print(f"tracks={tracks}")
     return tracks
 
 
@@ -174,11 +157,6 @@ def set_trains(train, pos, c):
         direction = -1
     else:
         direction = 1
-
-    # if c == 'S' and tType == 'N':
-    #     stop = len(train) - 1
-    # else:
-    #     stop = 0
 
     return [pos, tType, len(train), direction, len(train)-1, 0]
 
@@ -199,7 +177,6 @@ def train_crash(track, a_train, a_train_pos, b_train, b_train_pos, limit):
     for t in trains:
         tpos =[]
         for tidx in range(t[2]):
-            # tpos.append(tracks[(t[0]+(tidx*t[3]))%len(tracks)][0])
             tpos.append(tracks[(t[0]+(tidx*t[3]*(-1)))%len(tracks)][0])
         t.append(tpos)
     if check_collisions(trains):
